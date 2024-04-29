@@ -20,7 +20,20 @@ describe("Escrow", function () {
     return { escrow, owner, arbiter, beneficiary };
   }
 
-  describe("Deployment", function () {});
+  describe("Deployment", function () {
+    it("Should set the depositor, arbiter and beneficiary", async function () {
+      const { escrow, owner, arbiter, beneficiary } = await loadFixture(
+        deployEscrowContract
+      );
+
+      expect(await escrow.depositor()).to.equal(owner.address);
+      expect(await escrow.arbiter()).to.equal(arbiter.address);
+      expect(await escrow.beneficiary()).to.equal(beneficiary.address);
+      console.log("Owner / Depositor Address: ", owner.address);
+      console.log("Arbiter Address: ", arbiter.address);
+      console.log("Beneficiary Address: ", beneficiary.address);
+    });
+  });
 
   describe("Withdrawals", function () {});
 });
