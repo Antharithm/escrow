@@ -33,7 +33,27 @@ describe("Escrow", function () {
       console.log("Arbiter Address: ", arbiter.address);
       console.log("Beneficiary Address: ", beneficiary.address);
     });
+
+    it("Should receive and store the funds sent on deployment", async function () {
+      const { escrow } = await loadFixture(deployEscrowContract);
+      const balance = await hre.ethers.provider.getBalance(escrow);
+      expect(balance).to.equal(hre.ethers.parseEther("1"));
+      console.log("Received Balance: ", hre.ethers.formatEther(balance));
+    });
   });
 
-  describe("Withdrawals", function () {});
+  describe("Withdrawals", function () {
+    it("Should allow the arbiter to approve and transfer funds to beneficiary", async function () {
+      const { escrow, arbiter, beneficiary } = await loadFixture(
+        deployEscrowContract
+      );
+
+      await expect(escrow.connect(arbiter).approve())
+        .to.emit(escrow, "Approved")
+        .withArgs(hre.ethers.parseEther("1"));
+
+      // const balance = await hre.ethers.provider.getBalance(beneficiary.address);
+      // expect(balance).to.equal(hre.ethers.parseEther("1"));
+    });
+  });
 });
