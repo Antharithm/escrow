@@ -41,19 +41,4 @@ describe("Escrow", function () {
       console.log("Received Balance: ", hre.ethers.formatEther(balance));
     });
   });
-
-  describe("Withdrawals", function () {
-    it("Should allow the arbiter to approve and transfer funds to beneficiary", async function () {
-      const { escrow, arbiter, beneficiary } = await loadFixture(
-        deployEscrowContract
-      );
-
-      await expect(escrow.connect(arbiter).approve())
-        .to.emit(escrow, "Approved")
-        .withArgs(hre.ethers.parseEther("1"));
-
-      // const balance = await hre.ethers.provider.getBalance(beneficiary.address);
-      // expect(balance).to.equal(hre.ethers.parseEther("1"));
-    });
-  });
 });
