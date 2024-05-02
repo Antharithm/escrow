@@ -45,4 +45,21 @@ describe("Escrow", function () {
       console.log("Deposited Amount: ", hre.ethers.formatEther(balance));
     });
   });
+  describe("Withdrawals", function () {
+    it("Should withdraw ETH", async function () {
+      const { escrow, owner, arbiter, beneficiary } = await loadFixture(
+        deployEscrowContract
+      );
+      const depositAmount = hre.ethers.parseEther("1");
+      await escrow.connect(owner).deposit({ value: depositAmount });
+      console.log("Deposited Amount: ", hre.ethers.formatEther(depositAmount));
+      await escrow.connect(arbiter).approve();
+      console.log("Arbiter Approved release of funds.");
+      console.log("Withdrawing...");
+      const balance = await hre.ethers.provider.getBalance(escrow);
+      expect(balance).to.equal(hre.ethers.parseEther("0"));
+      console.log("Withdraw Complete.");
+      console.log("Remaining Balance: ", hre.ethers.formatEther(balance));
+    });
+  });
 });
