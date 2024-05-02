@@ -1,8 +1,4 @@
-import {
-  time,
-  loadFixture,
-} from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import hre from "hardhat";
 
@@ -14,9 +10,7 @@ describe("Escrow", function () {
     const [owner, arbiter, beneficiary] = await hre.ethers.getSigners();
 
     const Escrow = await hre.ethers.getContractFactory("Escrow");
-    const escrow = await Escrow.deploy(arbiter.address, beneficiary.address, {
-      value: hre.ethers.parseEther("1"),
-    });
+    const escrow = await Escrow.deploy(arbiter.address, beneficiary.address);
     return { escrow, owner, arbiter, beneficiary };
   }
 
@@ -29,16 +23,26 @@ describe("Escrow", function () {
       expect(await escrow.depositor()).to.equal(owner.address);
       expect(await escrow.arbiter()).to.equal(arbiter.address);
       expect(await escrow.beneficiary()).to.equal(beneficiary.address);
-      console.log("Owner / Depositor Address: ", owner.address);
-      console.log("Arbiter Address: ", arbiter.address);
-      console.log("Beneficiary Address: ", beneficiary.address);
+      console.log("Owner / Depositor: ", owner.address);
+      console.log("Arbiter: ", arbiter.address);
+      console.log("Beneficiary: ", beneficiary.address);
     });
 
-    it("Should receive and store the funds sent on deployment", async function () {
+    it("Should return an inital balance of zero ETH", async function () {
       const { escrow } = await loadFixture(deployEscrowContract);
       const balance = await hre.ethers.provider.getBalance(escrow);
-      expect(balance).to.equal(hre.ethers.parseEther("1"));
-      console.log("Received Balance: ", hre.ethers.formatEther(balance));
+      expect(balance).to.equal(hre.ethers.parseEther("0"));
+      console.log("Inital Balance: ", hre.ethers.formatEther(balance));
+    });
+  });
+  describe("Deposits", function () {
+    it("Should deposit ETH", async function () {
+      const { escrow, owner } = await loadFixture(deployEscrowContract);
+      const depositAmount = hre.ethers.parseEther("1");
+      await escrow.connect(owner).deposit({ value: depositAmount });
+      const balance = await hre.ethers.provider.getBalance(escrow);
+      expect(balance).to.equal(depositAmount);
+      console.log("Deposited Amount: ", hre.ethers.formatEther(balance));
     });
   });
 });

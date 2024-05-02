@@ -37,7 +37,7 @@ contract Escrow {
 
         uint balance = address(this).balance;
         (bool success, ) = beneficiary.call{value: balance}("");
-        require(success, "Transfer failed");
+        require(success, "Transfer failed!");
 
         emit Approved(balance);
     }
