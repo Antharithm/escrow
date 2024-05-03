@@ -62,4 +62,14 @@ describe("Escrow", function () {
       console.log("Remaining Balance: ", hre.ethers.formatEther(balance));
     });
   });
+  describe("Balance", function () {
+    it("Should return the balance of the contract", async function () {
+      const { escrow, owner } = await loadFixture(deployEscrowContract);
+      const depositAmount = hre.ethers.parseEther("1");
+      await escrow.connect(owner).deposit({ value: depositAmount });
+      const balance = await escrow.getBalance();
+      expect(balance).to.equal(depositAmount);
+      console.log("Balance: ", hre.ethers.formatEther(balance));
+    });
+  });
 });
